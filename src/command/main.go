@@ -34,10 +34,14 @@ func main() {
 			}
 		}
 	}
+
+	if err = configs.Index(); err != nil {
+		panic(err)
+	}
 }
 
 // config
-func LoadConfig() ([]*FetchConfig, error) {
+func LoadConfig() (FetchConfigs, error) {
 	bs, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		return nil, err
@@ -100,6 +104,9 @@ func (r *FetchConfig) Index(userID string) error {
 		if err := json.Unmarshal(bs, &image); err != nil {
 			return err
 		}
+		if image.URL == "" || image.ImageID == "" {
+			continue
+		}
 		done[image.ImageID] = image.URL
 	}
 	bs, err := json.MarshalIndent(done, "", "  ")
@@ -107,4 +114,25 @@ func (r *FetchConfig) Index(userID string) error {
 		return err
 	}
 	return ioutil.WriteFile(fmt.Sprintf("%s/index.json", dirname), []byte(bs), os.ModePerm)
+}
+
+type FetchConfigs []*FetchConfig
+
+func (r FetchConfigs) Index() error {
+	host := "https://chyroc.cn/beauty/data"
+	filename := fmt.Sprintf("./data/index.json")
+	res := []string{}
+	for _, v := range r {
+		for _, user := range v.Users {
+			if user.Id == "" {
+				continue
+			}
+			res = append(res, fmt.Sprintf("%s/%s/%s/", host, v.Type, user.Id))
+		}
+	}
+	bs, err := json.MarshalIndent(res, "", "  ")
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, []byte(bs), os.ModePerm)
 }

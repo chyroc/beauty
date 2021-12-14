@@ -24,7 +24,7 @@ jobs:
         run: /tmp/fetch && /tmp/send_msg
         env:
           LARK_WEBHOOK_URL_1: ${{ secrets.LARK_WEBHOOK_URL_1 }}
-          LARK_APP_ID_1: ${{ srcrets.LARK_APP_ID_1 }}
+          LARK_APP_ID_1: ${{ secrets.LARK_APP_ID_1 }}
           LARK_APP_SECRET_1: ${{ secrets.LARK_APP_SECRET_1 }}
 
       - name: commit

@@ -34,7 +34,7 @@ func (r *weiboImpl) GetImage(data string) ([]*Image, error) {
 
 	imaegs := []*Image{}
 	for _, card := range cards {
-		imaegs = append(imaegs, card.ToImages()...)
+		imaegs = append(imaegs, card.ToImages(uid)...)
 	}
 	return imaegs, err
 }
@@ -84,14 +84,14 @@ type getContainerRespCard struct {
 	Mblog *getContainerRespCardMblog `json:"mblog"`
 }
 
-func (r *getContainerRespCard) ToImages() []*Image {
+func (r *getContainerRespCard) ToImages(userID string) []*Image {
 	if r == nil || r.Mblog == nil || r.Mblog.RetweetedStatus != nil || len(r.Mblog.Pics) == 0 {
 		return nil
 	}
 
 	imaegs := []*Image{}
 	for _, pic := range r.Mblog.Pics {
-		image := &Image{ID: pic.Pid, URL: pic.Large.URL}
+		image := &Image{ImageID: pic.Pid, URL: pic.Large.URL, UserID: userID}
 		if image.URL == "" {
 			image.URL = pic.URL
 		}

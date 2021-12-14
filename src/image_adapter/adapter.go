@@ -1,8 +1,9 @@
 package image_adapter
 
 type Image struct {
-	ID        string `json:"id"`
-	URL       string `json:"url"`
+	UserID  string `json:"user_id"`
+	ImageID string `json:"image_id"`
+	URL     string `json:"url"`
 }
 
 type GetImager interface {

@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/chyroc/lark v0.0.87 // indirect
 	github.com/chyroc/persistent-cookiejar v0.1.0 // indirect
 	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
 )

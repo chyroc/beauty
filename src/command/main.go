@@ -82,7 +82,7 @@ func (r *FetchConfig) Save(userID string, image *image_adapter.Image) error {
 }
 
 func (r *FetchConfig) Index(userID string) error {
-	dirname := fmt.Sprintf("./data%s/%s", r.Type, userID)
+	dirname := fmt.Sprintf("./data/%s/%s", r.Type, userID)
 	fs, err := ioutil.ReadDir(dirname)
 	if err != nil {
 		return err

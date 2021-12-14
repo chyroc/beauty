@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/chyroc/beauty/src/image_adapter"
 )
@@ -27,6 +28,9 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
+			}
+			if err = config.Index(user.Id); err != nil {
+				panic(err)
 			}
 		}
 	}
@@ -75,4 +79,32 @@ func (r *FetchConfig) Save(userID string, image *image_adapter.Image) error {
 		return err
 	}
 	return ioutil.WriteFile(filename, bs, os.ModePerm)
+}
+
+func (r *FetchConfig) Index(userID string) error {
+	dirname := fmt.Sprintf("./data%s/%s", r.Type, userID)
+	fs, err := ioutil.ReadDir(dirname)
+	if err != nil {
+		return err
+	}
+	done := map[string]string{}
+	for _, f := range fs {
+		if !strings.HasSuffix(f.Name(), ".json") {
+			continue
+		}
+		bs, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dirname, f.Name()))
+		if err != nil {
+			return err
+		}
+		var image image_adapter.Image
+		if err := json.Unmarshal(bs, &image); err != nil {
+			return err
+		}
+		done[image.ImageID] = image.URL
+	}
+	bs, err := json.MarshalIndent(done, "", "  ")
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fmt.Sprintf("%s/index.json", dirname), []byte(bs), os.ModePerm)
 }
